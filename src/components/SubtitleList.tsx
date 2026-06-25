@@ -54,6 +54,9 @@ export const SubtitleList = memo(function SubtitleList({
             <span className="subtitle-row-content px-5 py-3.5">
               <span className="mb-1 block font-mono text-xs text-slate-400">{formatRange(item)}</span>
               <span className="subtitle-row-text whitespace-pre-line text-base leading-7">{item.text}</span>
+              {item.translation && (
+                <span className="mt-2 block whitespace-pre-line text-sm leading-6 text-cyan-700">{item.translation}</span>
+              )}
             </span>
           </button>
         ))}

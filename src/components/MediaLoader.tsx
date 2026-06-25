@@ -3,13 +3,13 @@ import { parseSubtitle } from "../lib/subtitleParser";
 import { useSubtitleReader } from "../state/SubtitleReaderContext";
 
 export function MediaLoader() {
-  const { setMediaSrc, setSubtitles } = useSubtitleReader();
+  const { setMediaFile, setSubtitles } = useSubtitleReader();
 
   const handleMediaChange = (file: File | undefined) => {
     if (!file) {
       return;
     }
-    setMediaSrc(URL.createObjectURL(file));
+    setMediaFile(file);
   };
 
   const handleSubtitleChange = async (file: File | undefined) => {

@@ -4,7 +4,12 @@ export interface SubtitleItem {
   startTime: number;
   endTime: number;
   text: string;
+  translation?: string;
 }
+
+export type SubtitleFormat = "srt" | "vtt";
+
+export type SubtitleExportMode = "original" | "translation" | "bilingual";
 
 export type PlayMode = "reading" | "intensive";
 

@@ -11,6 +11,7 @@ import type { LayoutMode, LoopConfig, PlayMode, SubtitleItem } from "../types";
 
 interface SubtitleReaderState {
   mediaSrc: string | null;
+  mediaFile: File | null;
   subtitles: SubtitleItem[];
   currentIndex: number;
   playMode: PlayMode;
@@ -20,6 +21,7 @@ interface SubtitleReaderState {
 
 type SubtitleReaderAction =
   | { type: "SET_MEDIA_SRC"; payload: string | null }
+  | { type: "SET_MEDIA_FILE"; payload: { file: File; src: string } | null }
   | { type: "SET_SUBTITLES"; payload: SubtitleItem[] }
   | { type: "SET_CURRENT_INDEX"; payload: number }
   | { type: "SET_PLAY_MODE"; payload: PlayMode }
@@ -31,6 +33,7 @@ type SubtitleReaderAction =
 interface SubtitleReaderContextValue extends SubtitleReaderState {
   dispatch: Dispatch<SubtitleReaderAction>;
   setMediaSrc: (mediaSrc: string | null) => void;
+  setMediaFile: (file: File | null) => void;
   setSubtitles: (subtitles: SubtitleItem[]) => void;
   setCurrentIndex: (index: number) => void;
   setPlayMode: (mode: PlayMode) => void;
@@ -41,6 +44,7 @@ interface SubtitleReaderContextValue extends SubtitleReaderState {
 
 const initialState: SubtitleReaderState = {
   mediaSrc: null,
+  mediaFile: null,
   subtitles: [],
   currentIndex: -1,
   playMode: "reading",
@@ -60,6 +64,13 @@ export function SubtitleReaderProvider({ children }: PropsWithChildren) {
 
   const setMediaSrc = useCallback((mediaSrc: string | null) => {
     dispatch({ type: "SET_MEDIA_SRC", payload: mediaSrc });
+  }, []);
+
+  const setMediaFile = useCallback((file: File | null) => {
+    dispatch({
+      type: "SET_MEDIA_FILE",
+      payload: file ? { file, src: URL.createObjectURL(file) } : null,
+    });
   }, []);
 
   const setSubtitles = useCallback((subtitles: SubtitleItem[]) => {
@@ -91,6 +102,7 @@ export function SubtitleReaderProvider({ children }: PropsWithChildren) {
       ...state,
       dispatch,
       setMediaSrc,
+      setMediaFile,
       setSubtitles,
       setCurrentIndex,
       setPlayMode,
@@ -98,7 +110,7 @@ export function SubtitleReaderProvider({ children }: PropsWithChildren) {
       patchLoopConfig,
       resetLoopCount,
     }),
-    [state, setMediaSrc, setSubtitles, setCurrentIndex, setPlayMode, setLayout, patchLoopConfig, resetLoopCount],
+    [state, setMediaSrc, setMediaFile, setSubtitles, setCurrentIndex, setPlayMode, setLayout, patchLoopConfig, resetLoopCount],
   );
 
   return <SubtitleReaderContext.Provider value={value}>{children}</SubtitleReaderContext.Provider>;
@@ -115,7 +127,13 @@ export function useSubtitleReader() {
 function reducer(state: SubtitleReaderState, action: SubtitleReaderAction): SubtitleReaderState {
   switch (action.type) {
     case "SET_MEDIA_SRC":
-      return { ...state, mediaSrc: action.payload };
+      return { ...state, mediaSrc: action.payload, mediaFile: null };
+    case "SET_MEDIA_FILE":
+      return {
+        ...state,
+        mediaSrc: action.payload?.src ?? null,
+        mediaFile: action.payload?.file ?? null,
+      };
     case "SET_SUBTITLES":
       return {
         ...state,

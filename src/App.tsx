@@ -127,8 +127,8 @@ function ReaderShell() {
         ref={mainLayoutRef}
         className={
           layout === "main"
-            ? "grid h-screen grid-cols-[var(--media-panel)_12px_minmax(0,1fr)] gap-4 p-4 pb-24"
-            : "relative h-screen p-4 pb-24"
+            ? "grid h-screen grid-cols-[var(--media-panel)_12px_minmax(0,1fr)] gap-4 p-4 pb-28"
+            : "relative h-screen p-4 pb-28"
         }
         style={{ "--media-panel": `${mediaPanelPercent}%` } as CSSProperties}
       >
